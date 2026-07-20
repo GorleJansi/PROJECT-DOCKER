@@ -1,5 +1,5 @@
 FROM ubuntu:24.04
-RUN dnf install httpd -y 
+RUN apt-get update && apt-get install -y apache2
 EXPOSE 80
 LABEL env=dev \
      author=jansi
