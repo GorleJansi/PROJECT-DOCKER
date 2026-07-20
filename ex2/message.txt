@@ -1,0 +1,2 @@
+HI jansi
+Welocme to Docker practice ...!!
