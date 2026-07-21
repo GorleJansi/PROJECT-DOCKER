@@ -7,3 +7,6 @@ RUN echo "Building application version ${APP_VERSION}" > /tmp/version.txt
 
 CMD ["cat", "/tmp/version.txt"]             
    # default executable which execute  at container start time 
+
+#    docker build -t arg-demo .  --> default arg 
+#    docker build --build-arg APP_VERSION=2.5   -t arg-demo .    --> buildtime give deafult args 
