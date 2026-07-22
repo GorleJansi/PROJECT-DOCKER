@@ -1,14 +1,45 @@
 groups:
-  - name: monitoring-stack
+  - name: live-test.rules
     rules:
-      - alert: CadvisorDown
-        expr: up{job="cadvisor"} == 0
+      - alert: AlertmanagerLiveTest
+        expr: vector(1)
+        for: 30s
+        labels:
+          severity: info
+          team: devops-lab
+          test: "true"
+        annotations:
+          summary: Alertmanager live test alert
+          description: This alert intentionally fires so you can confirm Prometheus sends alerts to Alertmanager.
+
+  - name: monitoring-stack.rules
+    rules:
+      - alert: PrometheusTargetDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Prometheus target is down
+          description: Prometheus cannot scrape {{ $labels.job }} target {{ $labels.instance }}.
+
+      - alert: PrometheusConfigReloadFailed
+        expr: prometheus_config_last_reload_successful == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: Prometheus config reload failed
+          description: Prometheus rejected the latest configuration reload.
+
+      - alert: PrometheusRuleEvaluationFailures
+        expr: increase(prometheus_rule_evaluation_failures_total[5m]) > 0
         for: 1m
         labels:
           severity: warning
         annotations:
-          summary: cAdvisor is down
-          description: Prometheus cannot scrape cAdvisor.
+          summary: Prometheus rule evaluation failed
+          description: One or more Prometheus alert rules failed during the last 5 minutes.
 
       - alert: AlertmanagerDown
         expr: up{job="alertmanager"} == 0
@@ -18,3 +49,42 @@ groups:
         annotations:
           summary: Alertmanager is down
           description: Prometheus cannot scrape Alertmanager.
+
+  - name: docker-container.rules
+    rules:
+      - alert: ContainerHighCpuUsage
+        expr: sum by (name) (rate(container_cpu_usage_seconds_total{name!=""}[5m])) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Container CPU usage is high
+          description: Container {{ $labels.name }} is using more than 0.8 CPU cores for 5 minutes.
+
+      - alert: ContainerHighMemoryUsage
+        expr: |
+          (
+            sum by (name) (container_memory_working_set_bytes{name!=""})
+            /
+            sum by (name) (container_spec_memory_limit_bytes{name!=""} > 0)
+          ) > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Container memory usage is high
+          description: Container {{ $labels.name }} is using more than 80 percent of its memory limit.
+
+      - alert: ContainerFilesystemUsageHigh
+        expr: |
+          (
+            container_fs_usage_bytes{name!="", device!~"tmpfs|shm"}
+            /
+            container_fs_limit_bytes{name!="", device!~"tmpfs|shm"}
+          ) > 0.85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Container filesystem usage is high
+          description: Container {{ $labels.name }} filesystem usage is above 85 percent.
