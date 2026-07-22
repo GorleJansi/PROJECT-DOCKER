@@ -1,23 +1,29 @@
-name: compose project demo
+name: compose-demo
+
 services:
-   web:
-     build:
+  web:
+    build:
       context: .
       dockerfile: Dockerfile
-    # docker build . -->creates image
-     ports:
-       - "${APP_PORT :- 8080}:5000"
-     environment:
-          APP_ENV: "${APP_ENV:-development}"
-          REDIS_HOST: redis     #container in same network can comminicate to other using servicename(compose dns will resolve)
-          REDIS_PORT: "6379"    #redis listening on redis-ip:redis-port
-     networks:
-        - application-network
-     depends_on:
-         redis:
-            condition: service_healthy        #create this container only after redis container is created and is healthy
-   redis:
-    image: redis:alpine     #image exists locally pr in registry
+
+    ports:
+      - "${APP_PORT:-8080}:5000"
+
+    environment:
+      APP_ENV: "${APP_ENV:-development}"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+
+    depends_on:
+      redis:
+        condition: service_healthy
+
+    networks:
+      - application-network
+
+  redis:
+    image: redis:alpine
+
     command:
       - redis-server
       - --appendonly
@@ -36,12 +42,11 @@ services:
       retries: 5
 
     networks:
-      - application-network         
-
+      - application-network
 
 volumes:
-   redis-data:
+  redis-data:
+
 networks:
   application-network:
-    driver: bridge   
- 
+    driver: bridge
