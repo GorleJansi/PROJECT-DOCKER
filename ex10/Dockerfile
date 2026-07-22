@@ -1,6 +1,6 @@
 FROM nginx:alpine
 COPY ex.html /usr/share/nginx/html/index.html 
-ARG city =sklm
+ARG city=sklm
 ENV project=nginx-static \
     author=jansi \
     place=${city}
