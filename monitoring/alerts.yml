@@ -1,0 +1,20 @@
+groups:
+  - name: monitoring-stack
+    rules:
+      - alert: CadvisorDown
+        expr: up{job="cadvisor"} == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: cAdvisor is down
+          description: Prometheus cannot scrape cAdvisor.
+
+      - alert: AlertmanagerDown
+        expr: up{job="alertmanager"} == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: Alertmanager is down
+          description: Prometheus cannot scrape Alertmanager.
