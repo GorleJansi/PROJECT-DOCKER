@@ -22,3 +22,8 @@ CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 
 # runtime image:
 # python + installed app dependencies + app code
+
+# Build the Python image:
+# docker build -t python-multistage:v1 .
+# Check the image:
+# docker images python-multistage
