@@ -44,6 +44,12 @@ docker network connect roboshop mysqldb-c
 
 If a container is already connected, Docker will show an error. That is okay.
 
+## MySQL Requirement
+
+Use MySQL `8.0` for RoboShop Shipping.
+
+Do not use floating `mysql:8`, because it can pull MySQL `8.4`, where `mysql_native_password` is disabled by default. The provided `app-user.sql` expects `mysql_native_password`.
+
 ## Load MySQL Schema
 
 The SQL files are inside the Shipping image under `/app/db`.
@@ -51,19 +57,19 @@ The SQL files are inside the Shipping image under `/app/db`.
 Load schema:
 
 ```bash
-docker run --rm --entrypoint sh shipping:v1 -c 'cat /app/db/schema.sql' | docker exec -i mysqldb-c mysql -uroot -p'RoboShop@1'
+docker run --rm --entrypoint sh shipping:v1 -c 'cat /app/db/schema.sql' | mysql -h 127.0.0.1 -P 3306 -uroot -p'RoboShop@1'
 ```
 
 Create app user:
 
 ```bash
-docker run --rm --entrypoint sh shipping:v1 -c 'cat /app/db/app-user.sql' | docker exec -i mysqldb-c mysql -uroot -p'RoboShop@1'
+docker run --rm --entrypoint sh shipping:v1 -c 'cat /app/db/app-user.sql' | mysql -h 127.0.0.1 -P 3306 -uroot -p'RoboShop@1'
 ```
 
 Load master data:
 
 ```bash
-docker run --rm --entrypoint sh shipping:v1 -c 'cat /app/db/master-data.sql' | docker exec -i mysqldb-c mysql -uroot -p'RoboShop@1'
+docker run --rm --entrypoint sh shipping:v1 -c 'cat /app/db/master-data.sql' | mysql -h 127.0.0.1 -P 3306 -uroot -p'RoboShop@1'
 ```
 
 ## Run Shipping
