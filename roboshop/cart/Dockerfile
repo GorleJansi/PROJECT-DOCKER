@@ -1,7 +1,7 @@
 FROM busybox:1.36 AS builder
 WORKDIR /app
 ADD https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip /tmp/cart.zip
-RUN unzip -d /tmp/cart.zip  /app
+RUN unzip /tmp/cart.zip -d /app
 
 
 
