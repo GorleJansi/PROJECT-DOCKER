@@ -15,7 +15,8 @@ RUN useradd --no-create-home --home-dir /app --system --shell /usr/sbin/nologin 
 
 WORKDIR /app
 
-COPY --from=builder /app/ ./            # Copies extracted app code from builder stage into final image.
+COPY --from=builder /app/ ./            
+# Copies extracted app code from builder stage into final image.
 
 RUN npm install \
     && chown -R roboshop:roboshop /app
