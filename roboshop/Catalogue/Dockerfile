@@ -21,8 +21,28 @@ RUN npm install \
 USER roboshop
 
 ENV MONGO=true
-ENV MONGO_URL="mongodb://mongodb:27017/catalogue"
-
+ENV MONGO_URL="mongodb://mongodb-c:27017/catalogue"
+ENV REDIS_URL="redis://redis-c:6379"
 EXPOSE 8080
 
 CMD ["node", "server.js"]
+
+
+
+# VM:
+# systemctl start user
+#         ↓
+# systemd reads /etc/systemd/system/user.service
+#         ↓
+# ExecStart=/bin/node /app/server.js
+#         ↓
+# Node.js starts custom code
+
+# Docker:
+# docker run catalogue:v1
+#         ↓
+# Docker reads image CMD
+#         ↓
+# CMD ["node", "server.js"]
+#         ↓
+# Node.js starts custom code
