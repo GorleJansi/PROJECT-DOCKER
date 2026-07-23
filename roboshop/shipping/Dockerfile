@@ -15,16 +15,11 @@ RUN useradd --system --home-dir /app --shell /usr/sbin/nologin --comment "robosh
 WORKDIR /app
 COPY --from=builder /app/shipping.jar ./
 COPY --from=source /app/db ./db
-
 RUN chown -R roboshop:roboshop /app
-
 USER roboshop
-
 ENV CART_ENDPOINT="cart-c:8080"
 ENV DB_HOST="mysqldb-c"
-
 EXPOSE 8080
-
 CMD ["java", "-jar", "shipping.jar"]
 
 
