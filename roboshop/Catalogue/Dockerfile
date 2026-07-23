@@ -1,12 +1,10 @@
-FROM node:20-bookworm-slim AS builder
+FROM busybox:1.36 AS builder
 
 WORKDIR /app
 
 ADD https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip /tmp/catalogue.zip
 
-RUN npm install -g adm-zip \
-    && node -e "require('adm-zip')('/tmp/catalogue.zip').extractAllTo('/app', true)" \
-    && rm /tmp/catalogue.zip
+RUN unzip /tmp/catalogue.zip -d /app
 
 
 FROM node:20-bookworm-slim AS runtime

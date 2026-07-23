@@ -1,13 +1,10 @@
-FROM node:20-bookworm-slim AS builder
-
-RUN apt-get update && apt-get install -y curl unzip \
-    && rm -rf /var/lib/apt/lists/*
+FROM busybox:1.36 AS builder
 
 WORKDIR /app
 
-RUN curl -L -o /tmp/user.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip \
-    && unzip /tmp/user.zip \
-    && rm /tmp/user.zip
+ADD https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip /tmp/user.zip
+
+RUN unzip /tmp/user.zip -d /app
 
 
 FROM node:20-bookworm-slim AS runtime
